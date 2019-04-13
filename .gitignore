@@ -2,3 +2,5 @@
 .ipynb_checkpoints/*
 saved_weights/*
 samples/*
+js_models/*
+!js_models/*.html

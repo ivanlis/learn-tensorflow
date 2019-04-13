@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        
+        <title>AlexNet Bilbao CNN</title>
+
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
+        <!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script> -->
+<!-- 
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"> </script>
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script> -->
+
+        <script>
+            function previewFile() {
+                var preview = document.querySelector('img');
+                //var canvas = document.getElementById('canvas');
+                //var canvasContext = canvas.getContext('2d');
+                var file = document.querySelector('input[type=file]').files[0];
+
+                var reader = new FileReader();
+
+                reader.onloadend = function() {
+                    preview.src = reader.result;
+                }
+
+                if (file)
+                    reader.readAsDataURL(file);
+                else
+                    preview.src = "";
+
+                //canvasContext.drawImage(document.getElementById("preview"), 0, 0);
+            }
+
+
+            //const model = tf.loadLayersModel("file:///home/ivan/learning/tensorflow/js_models/alexnet_bilbao/model.json");
+            const modelPromise = tf.loadLayersModel("http://localhost:8000/alexnet_bilbao/model.json");
+
+            const modelPromise1 = (async () => {
+                model = await modelPromise;
+                //model.compile({optimizer: tf.train.adam(1e-5), loss: 'categoricalCrossentropy', metrics: ['accuracy']});
+                return model;
+            })();
+
+            // const modelVal = (async () => { 
+            //         const model = await modelPromise; 
+            //         //console.log(model);
+            //         model.summary();
+
+            //         //document.getElementById('summary').innerHTML = model;
+            //         return model;
+            //     }
+            // )();
+
+
+            // const model = (async () => { await modelPromise; })();
+
+            async function printSummary()
+            {
+                //var summaryDiv = document.querySelector('summary');
+                //var summary = model.summary();
+                //summaryDiv.innerText = summary;
+                
+                const model = await modelPromise1;
+
+                model.summary();
+
+
+                var img = document.querySelector("#preview");
+                //console.log(img);
+                //var canvas = document.getElementById('canvas');
+ 
+                //var canvasContext = canvas.getContext('2d');
+                //canvas.width = img.width;
+                //canvas.height = img.height;
+
+                //canvasContext.drawImage(img, 0, 0);
+
+                //const imageData = canvasContext.getImageData(0, 0, canvas.height, canvas.width);
+
+                const example = tf.div(tf.image.resizeBilinear(tf.browser.fromPixels(img, 3), [227, 227]).expandDims(0), 255);
+                console.log(example);
+                const result = model.predict(example);
+                tf.argMax(result, 1).array().then(/*array => console.log(array)*/ function(array) { document.getElementById("resultClass").innerHTML = array[0]; } );
+            }
+        </script>
+
+        <!-- <script async>
+            const model = tf.loadLayersModel("http://localhost:8000/alexnet_bilbao/model.json");
+        </script> -->
+    </head>
+
+    <body>
+        <h2>Hello, AlexNet Bilbao!</h2>
+
+        <p>
+            <input type="file" onchange="previewFile()"/>
+            <input type="submit" onclick="printSummary()"/>
+        </p>
+        <p>
+            <img src="" height="256" alt="Image preview" id="preview"/>
+            <canvas id="canvas"></canvas>
+        </p>
+        <div id="resultClass"></div>
+
+        <script>
+            //const modelVal = await model;
+            //model.summary();
+            //document.getElementById('summary').innerHTML = model.print();
+            
+            // (async () => { 
+            //         const model = await modelPromise; 
+            //         //console.log(model);
+            //         model.summary();
+
+            //         //document.getElementById('summary').innerHTML = model;
+            //     }
+            // )();
+            
+            //console.log(modelPromise);
+            console.log(modelPromise);
+
+            //(async () => { await model.summary(); })();
+
+        </script>
+    </body>
+</html>
