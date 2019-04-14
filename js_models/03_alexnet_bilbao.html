@@ -35,7 +35,8 @@
 
 
             //const model = tf.loadLayersModel("file:///home/ivan/learning/tensorflow/js_models/alexnet_bilbao/model.json");
-            const modelPromise = tf.loadLayersModel("http://localhost:8000/alexnet_bilbao/model.json");
+            //const modelPromise = tf.loadLayersModel("http://localhost:8000/alexnet_bilbao/model.json");
+            const modelPromise = tf.loadLayersModel("alexnet_bilbao/model.json");
 
             const modelPromise1 = (async () => {
                 model = await modelPromise;
